@@ -1,33 +1,43 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, Button, Card } from 'react-native-paper';
-import { useSelector, useDispatch } from 'react-redux';
+import { Appbar, Text, Surface, Icon } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import { logout } from '../store/slices/authSlice';
+import { useAuth } from '../hooks/useAuth';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const HomeScreen = () => {
-  const dispatch = useDispatch();
+  const insets = useSafeAreaInsets();
+  const { logout } = useAuth();
 
+  // Extraemos los datos del store actualizados
   const { username } = useSelector((state: RootState) => state.auth);
 
   return (
     <View style={styles.container}>
-      <Card style={styles.card}>
-        <Card.Content style={styles.content}>
-          <Text variant="headlineSmall" style={styles.userName}>
-            {username}
-          </Text>
-        </Card.Content>
-      </Card>
+      <Appbar.Header elevated style={{ marginTop: insets.top }}>
+        <Appbar.Action icon="account-circle" size={30} onPress={() => {}} />
+        <Appbar.Content title={username} />
+        <Appbar.Action icon="logout" onPress={logout} />
+      </Appbar.Header>
 
-      <Button
-        mode="outlined"
-        onPress={() => dispatch(logout())}
-        style={styles.logoutBtn}
-        icon="logout"
-      >
-        Cerrar Sesión
-      </Button>
+      <View style={styles.content}>
+        <Surface style={styles.surface} elevation={2}>
+          <View style={styles.innerContent}>
+            <View style={styles.icon}>
+              <Icon size={42} source="notebook" color="black" />
+            </View>
+            <View style={styles.innerData}>
+              <Text variant="headlineMedium" style={styles.usernameText}>
+                Clientes
+              </Text>
+              <Text variant="bodySmall" style={styles.idText}>
+                Administrar clientes
+              </Text>
+            </View>
+          </View>
+        </Surface>
+      </View>
     </View>
   );
 };
@@ -35,14 +45,38 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
-    justifyContent: 'center',
+    backgroundColor: '#f6f6f6',
   },
-  card: { padding: 10, elevation: 4 },
-  content: { alignItems: 'center' },
-  userName: { marginTop: 15, fontWeight: 'bold' },
-  logoutBtn: { marginTop: 30 },
+  content: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    padding: 20,
+  },
+  surface: {
+    padding: 30,
+    width: '100%',
+    alignItems: 'center',
+    borderRadius: 15,
+    backgroundColor: '#fff',
+  },
+  icon: {
+    marginRight: 20,
+  },
+  innerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  innerData: { flexDirection: 'column' },
+  usernameText: {
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  idText: {
+    marginTop: 10,
+    color: '#666',
+  },
 });
 
 export default HomeScreen;

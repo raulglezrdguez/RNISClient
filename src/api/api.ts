@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { storage } from '../storage/mmkv';
+import { store } from '../store/store';
+import { logout } from '../store/slices/authSlice';
 
 const api = axios.create({
   baseURL: 'https://pruebareactjs.test-class.com/Api/api',
@@ -14,25 +16,16 @@ api.interceptors.request.use(config => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  // Debug: show full request URL for emulator troubleshooting
-  try {
-    // config.url may be relative
-    const fullUrl = `${config.baseURL || ''}${config.url || ''}`;
-    console.log('[API REQUEST]', config.method?.toUpperCase(), fullUrl);
-  } catch {
-    // ignore
-  }
   return config;
 });
 
 api.interceptors.response.use(
   res => res,
   err => {
-    console.error(
-      '[API ERROR]',
-      err?.response?.status,
-      err?.response?.data || err.message,
-    );
+    if (err.response && err.response.status === 401) {
+      console.warn('Sesión expirada o token inválido. Cerrando sesión...');
+      store.dispatch(logout());
+    }
     return Promise.reject(err);
   },
 );

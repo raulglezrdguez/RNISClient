@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
@@ -6,13 +6,26 @@ import { RootState } from '../store/store';
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import { store } from '../store/store';
+import { logout } from '../store/slices/authSlice';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated,
+  const { expiration, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth,
   );
+
+  useEffect(() => {
+    if (isAuthenticated && expiration) {
+      const now = new Date().getTime();
+      const expireTime = new Date(expiration).getTime();
+
+      if (now > expireTime) {
+        store.dispatch(logout());
+      }
+    }
+  }, [isAuthenticated, expiration]);
 
   return (
     <Stack.Navigator
