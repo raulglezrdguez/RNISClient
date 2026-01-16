@@ -1,11 +1,19 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
 import {
-  Card,
+  View,
+  FlatList,
+  StyleSheet,
+  RefreshControl,
+  TouchableOpacity,
+} from 'react-native';
+import {
+  //   Card,
   Text,
-  Avatar,
+  //   Avatar,
   ActivityIndicator,
   Appbar,
+  Surface,
+  Icon,
 } from 'react-native-paper';
 import api from '../api/api';
 import { Client } from '../types/client';
@@ -46,18 +54,29 @@ const ClientsScreen = ({ navigation }: any) => {
     fetchClients();
   };
 
-  const avatarItem = (props: { item: Client }) => {
-    return <Avatar.Icon {...props} icon="account" style={styles.avatar} />;
-  };
-
   const renderItem = ({ item }: { item: Client }) => (
-    <Card style={styles.card} elevation={1}>
-      <Card.Title
-        title={`${item.nombre} ${item.apellidos}`}
-        subtitle={`ID: ${item.identificacion}`}
-        left={avatarItem.bind(null, { item })}
-      />
-    </Card>
+    <Surface style={styles.surface} elevation={2}>
+      <TouchableOpacity
+        style={styles.touchableArea}
+        onPress={() => console.log('Cliente seleccionado:', item.id)} // Aquí irá la navegación a detalles
+        activeOpacity={0.7}
+      >
+        <View style={styles.innerContent}>
+          <View style={styles.iconContainer}>
+            {/* Usamos el icono de usuario para mantener la consistencia */}
+            <Icon size={42} source="account-circle" color="black" />
+          </View>
+          <View style={styles.innerData}>
+            <Text variant="titleLarge" style={styles.clientNameText}>
+              {item.nombre} {item.apellidos}
+            </Text>
+            <Text variant="bodySmall" style={styles.idText}>
+              ID: {item.identificacion}
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Surface>
   );
 
   return (
@@ -97,9 +116,36 @@ const ClientsScreen = ({ navigation }: any) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
-  listContent: { padding: 10, paddingBottom: 20 },
-  card: { marginBottom: 10, backgroundColor: '#fff' },
-  avatar: { backgroundColor: '#6200ee' },
+  listContent: { padding: 20, paddingBottom: 20 },
+  surface: {
+    marginBottom: 15,
+    width: '100%',
+    borderRadius: 15,
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+  },
+  touchableArea: {
+    padding: 20,
+  },
+  innerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    marginRight: 20,
+  },
+  innerData: {
+    flexDirection: 'column',
+    flex: 1,
+  },
+  clientNameText: {
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  idText: {
+    marginTop: 5,
+    color: '#666',
+  },
   loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loaderText: { marginTop: 10, color: '#666' },
   emptyText: { textAlign: 'center', marginTop: 50, color: '#999' },
