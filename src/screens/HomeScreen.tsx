@@ -1,16 +1,15 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Appbar, Text, Surface, Icon } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { useAuth } from '../hooks/useAuth';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
   const { logout } = useAuth();
 
-  // Extraemos los datos del store actualizados
   const { username } = useSelector((state: RootState) => state.auth);
 
   return (
@@ -23,19 +22,25 @@ const HomeScreen = () => {
 
       <View style={styles.content}>
         <Surface style={styles.surface} elevation={2}>
-          <View style={styles.innerContent}>
-            <View style={styles.icon}>
-              <Icon size={42} source="notebook" color="black" />
+          <TouchableOpacity
+            style={styles.touchableArea}
+            onPress={() => navigation.navigate('Clients')}
+            activeOpacity={0.7}
+          >
+            <View style={styles.innerContent}>
+              <View style={styles.icon}>
+                <Icon size={42} source="notebook" color="black" />
+              </View>
+              <View style={styles.innerData}>
+                <Text variant="headlineMedium" style={styles.usernameText}>
+                  Clientes
+                </Text>
+                <Text variant="bodySmall" style={styles.idText}>
+                  Administrar clientes
+                </Text>
+              </View>
             </View>
-            <View style={styles.innerData}>
-              <Text variant="headlineMedium" style={styles.usernameText}>
-                Clientes
-              </Text>
-              <Text variant="bodySmall" style={styles.idText}>
-                Administrar clientes
-              </Text>
-            </View>
-          </View>
+          </TouchableOpacity>
         </Surface>
       </View>
     </View>
@@ -54,11 +59,14 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   surface: {
-    padding: 30,
     width: '100%',
     alignItems: 'center',
     borderRadius: 15,
     backgroundColor: '#fff',
+    overflow: 'hidden',
+  },
+  touchableArea: {
+    padding: 30,
   },
   icon: {
     marginRight: 20,

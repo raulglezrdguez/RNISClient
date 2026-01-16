@@ -6,6 +6,7 @@ import { RootState } from '../store/store';
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import ClientsScreen from '../screens/ClientsScreen';
 import { store } from '../store/store';
 import { logout } from '../store/slices/authSlice';
 
@@ -48,7 +49,10 @@ const AppNavigator = () => {
       }}
     >
       {isAuthenticated ? (
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Clients" component={ClientsScreen} />
+        </>
       ) : (
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
