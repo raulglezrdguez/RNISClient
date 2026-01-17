@@ -1,97 +1,123 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# RNISClient: react native innosoft client
 
-# Getting Started
+Aplicación móvil desarrollada con React Native que ofrece una experiencia de usuario completa con navegación, gestión de estado global, formularios validados y componentes de UI modernos.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 🚀 Tecnologías Principales
 
-## Step 1: Start Metro
+- **React Native 0.83.1** - Framework principal
+- **React 19.2.0** - Biblioteca de UI
+- **TypeScript** - Tipado estático (recomendado)
+- **Redux Toolkit** - Gestión de estado global
+- **React Navigation** - Navegación entre pantallas
+- **React Hook Form + Zod** - Formularios y validación
+- **React Native Paper** - Componentes Material Design
+- **Axios** - Cliente HTTP
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 📋 Requisitos Previos
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+Antes de comenzar, asegúrate de tener instalado:
 
-```sh
-# Using npm
+- **Node.js** (versión 18 o superior)
+- **npm** (versión 9 o superior) o **yarn** (versión 1.22 o superior)
+- **Java Development Kit (JDK)** 17 (para Android)
+- **Android Studio** con Android SDK (para desarrollo Android)
+- **Xcode** (para desarrollo iOS - solo macOS)
+- **Cocoapods** (para iOS)
+
+## 📦 Instalación
+
+1. Clona el repositorio:
+
+```bash
+git clone https://github.com/raulglezrdguez/RNISClient.git
+cd RNISClient
+```
+
+2. Instala las dependencias:
+
+```bash
+# Usando npm
+npm install
+
+# O usando yarn
+yarn install
+```
+
+3. Instala las dependencias de iOS (solo para macOS):
+
+```bash
+cd ios && pod install && cd ..
+```
+
+## 🎮 Scripts Disponibles
+
+```bash
+# Iniciar servidor Metro
 npm start
 
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
+# Ejecutar en Android
 npm run android
 
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+# Ejecutar en iOS
 npm run ios
 
-# OR using Yarn
-yarn ios
+# Ejecutar tests
+npm test
+
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## 🔍 Características Principales
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+### ✅ Formularios y Validación
 
-## Step 3: Modify your app
+- Uso de React Hook Form para performance optimizada
+- Zod para validación de esquemas type-safe
+- Integración con componentes de React Native Paper
 
-Now that you have successfully run the app, let's make changes!
+### 🗺️ Navegación
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+- Stack Navigator para flujo de pantallas
+- Type safety con TypeScript
+- Transiciones personalizadas con Reanimated
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+### 🎨 UI/UX
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+- React Native Paper para componentes Material Design
+- Vector Icons para iconografía completa
+- SVG Transformer para imágenes vectoriales
+- Manejo de Safe Areas en dispositivos modernos
 
-## Congratulations! :tada:
+### 💾 Estado y Almacenamiento
 
-You've successfully run and modified your React Native App. :partying_face:
+- Redux Toolkit para estado global
+- MMKV para almacenamiento persistente y rápido
+- Persistencia automática del store
 
-### Now what?
+### 📸 Multimedia
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+- Image Picker para selección de imágenes de galería/cámara
+- Soporte para SVGs como componentes
 
-# Troubleshooting
+### 🌐 API
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+- Axios con interceptores para autenticación
+- Configuración base para manejo de errores
+- Refresh token automático
 
-# Learn More
+## 🤝 Contribución
 
-To learn more about React Native, take a look at the following resources:
+- Haz fork del proyecto
+- Crea una rama para tu feature (git checkout -b feature/AmazingFeature)
+- Commit tus cambios (git commit -m 'Add some AmazingFeature')
+- Push a la rama (git push origin feature/AmazingFeature)
+- Abre un Pull Request
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## 📄 Licencia
+
+Este proyecto está licenciado bajo la [Licencia MIT](https://opensource.org/licenses/MIT) - ver el archivo LICENSE para más detalles.
+
+## 📞 Soporte
+
+Email: raulglezrdguez69@gmail.com
+
+Desarrollado con ❤️ usando tecnologias modernas de React Native CLI
