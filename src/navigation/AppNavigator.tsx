@@ -9,6 +9,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 import ClientsScreen from '../screens/ClientsScreen';
 import { store } from '../store/store';
 import { logout } from '../store/slices/authSlice';
+import EditClientScreen from '../screens/EditClientScreen';
 
 const Stack = createStackNavigator();
 
@@ -52,6 +53,7 @@ const AppNavigator = () => {
         <>
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Clients" component={ClientsScreen} />
+          <Stack.Screen name="EditClient" component={EditClientScreen} />
         </>
       ) : (
         <>

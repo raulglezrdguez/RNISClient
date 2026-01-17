@@ -19,5 +19,20 @@ export const registerSchema = z.object({
   password: passwordValidation,
 });
 
+export const clientSchema = z.object({
+  nombre: z.string().min(1, 'Requerido'),
+  apellidos: z.string().min(1, 'Requerido'),
+  identificacion: z.string().min(1, 'Requerido'),
+  sexo: z.string(),
+  fNacimiento: z.date(),
+  fAfiliacion: z.date(),
+  telefonoCelular: z.string(),
+  otroTelefono: z.string(),
+  direccion: z.string(),
+  resenaPersonal: z.string(),
+  interesesId: z.string(),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
+export type ClientFormData = z.infer<typeof clientSchema>;

@@ -1,13 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
+import interestsReducer from './slices/interSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    interests: interestsReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
-      serializableCheck: false, // Necesario para evitar avisos con MMKV/Persist
+      serializableCheck: false,
     }),
 });
 

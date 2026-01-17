@@ -87,7 +87,7 @@ const ClientsScreen = ({ navigation }: any) => {
     <Surface style={styles.surface} elevation={2}>
       <TouchableOpacity
         style={styles.touchableArea}
-        onPress={() => console.log('Cliente seleccionado:', item.id)} // Aquí irá la navegación a detalles
+        onPress={() => navigation.navigate('EditClient', { clientId: item.id })}
         activeOpacity={0.7}
       >
         <View style={styles.innerContent}>

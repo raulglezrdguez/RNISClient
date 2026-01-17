@@ -1,16 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Appbar, Text, Surface, Icon } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { useAuth } from '../hooks/useAuth';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { setInterests } from '../store/slices/interSlice';
+import api from '../api/api';
 
 const HomeScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
   const { logout } = useAuth();
+  const dispatch = useDispatch();
 
   const { username } = useSelector((state: RootState) => state.auth);
+
+  useEffect(() => {
+    const loadInterests = async () => {
+      try {
+        const response = await api.get('/Intereses/Listado');
+        console.log(response.data);
+        dispatch(setInterests(response.data));
+      } catch (error) {
+        console.error('Error en la carga inicial:', error);
+      }
+    };
+
+    loadInterests();
+  }, [dispatch]);
 
   return (
     <View style={styles.container}>
