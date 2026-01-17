@@ -19,7 +19,6 @@ const HomeScreen = ({ navigation }: any) => {
     const loadInterests = async () => {
       try {
         const response = await api.get('/Intereses/Listado');
-        console.log(response.data);
         dispatch(setInterests(response.data));
       } catch (error) {
         console.error('Error en la carga inicial:', error);

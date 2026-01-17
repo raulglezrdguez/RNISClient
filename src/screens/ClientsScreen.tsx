@@ -84,7 +84,6 @@ const ClientsScreen = ({ navigation }: any) => {
   }, [userid]);
 
   const updateClient = async (data: Client) => {
-    console.log(data);
     clients.forEach((client, index) => {
       if (client.id === data.id) {
         const updatedClients = [...clients];
@@ -137,6 +136,17 @@ const ClientsScreen = ({ navigation }: any) => {
         <Appbar.Content title="Consulta de Clientes" />
         <Appbar.Action icon="logout" onPress={logout} />
       </Appbar.Header>
+
+      <Button
+        mode="contained"
+        icon="plus"
+        onPress={() => navigation.navigate('EditClient', { clientId: null })}
+        style={styles.newClientButton}
+        contentStyle={styles.newClientButtonContent}
+        labelStyle={styles.newClientButtonLabel}
+      >
+        NUEVO CLIENTE
+      </Button>
 
       <View style={styles.searchSection}>
         <TextInput
@@ -196,6 +206,23 @@ const ClientsScreen = ({ navigation }: any) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
+  newClientButton: {
+    marginTop: 20,
+    marginBottom: 16,
+    borderRadius: 5,
+    elevation: 2,
+    maxWidth: 200,
+    alignSelf: 'center',
+  },
+  newClientButtonContent: {
+    height: 48,
+    flexDirection: 'row',
+  },
+  newClientButtonLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    letterSpacing: 1,
+  },
   searchSection: {
     padding: 20,
     backgroundColor: '#fff',

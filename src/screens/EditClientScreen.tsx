@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import {
   TextInput,
   Button,
@@ -9,6 +15,8 @@ import {
   HelperText,
   Icon,
   Avatar,
+  Portal,
+  Dialog,
 } from 'react-native-paper';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -31,6 +39,9 @@ const EditClientScreen = ({ route, navigation }: any) => {
   const [loading, setLoading] = useState(isEdit);
   const [showBirthPicker, setShowBirthPicker] = useState(false);
   const [showAffiliationPicker, setShowAffiliationPicker] = useState(false);
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const {
     control,
@@ -61,13 +72,10 @@ const EditClientScreen = ({ route, navigation }: any) => {
     name: 'imagen',
   });
 
-  console.log(currentImage);
-
   const loadClientData = useCallback(async () => {
     try {
       const response = await api.get(`/Cliente/Obtener/${clientId}`);
       const data = response.data;
-      console.log(data);
       reset({
         ...data,
         fNacimiento: data.fNacimiento ? new Date(data.fNacimiento) : new Date(),
@@ -83,36 +91,47 @@ const EditClientScreen = ({ route, navigation }: any) => {
   useEffect(() => {
     if (isEdit) {
       loadClientData();
+    } else {
+      reset({
+        sexo: 'M',
+        fNacimiento: dayjs().subtract(20, 'year').toDate(),
+        fAfiliacion: dayjs().subtract(1, 'year').toDate(),
+        nombre: '',
+        apellidos: '',
+        identificacion: '',
+        telefonoCelular: '',
+        otroTelefono: '',
+        direccion: '',
+        resenaPersonal: '',
+        interesesId: '',
+        imagen: '',
+      });
     }
-  }, [isEdit, loadClientData]);
+  }, [isEdit, loadClientData, reset]);
 
   const onSubmit = async (data: ClientFormData) => {
     try {
+      const d = {
+        id: clientId,
+        nombre: data.nombre,
+        apellidos: data.apellidos,
+        identificacion: data.identificacion,
+        celular: data.telefonoCelular,
+        otroTelefono: data.otroTelefono,
+        direccion: data.direccion,
+        fNacimiento: data.fNacimiento.toISOString(),
+        fAfiliacion: data.fAfiliacion.toISOString(),
+        sexo: data.sexo,
+        resennaPersonal: data.resenaPersonal,
+        interesFK: data.interesesId,
+        usuarioId: userid,
+        imagen: currentImage,
+      };
+
       if (isEdit) {
-        const d = {
-          id: clientId,
-          nombre: data.nombre,
-          apellidos: data.apellidos,
-          identificacion: data.identificacion,
-          celular: data.telefonoCelular,
-          otroTelefono: data.otroTelefono,
-          direccion: data.direccion,
-          fNacimiento: data.fNacimiento.toISOString(),
-          fAfiliacion: data.fAfiliacion.toISOString(),
-          sexo: data.sexo,
-          resennaPersonal: data.resenaPersonal,
-          interesFK: data.interesesId,
-          usuarioId: userid,
-          imagen: currentImage,
-        };
-        console.log(d);
         await api.post(`/Cliente/Actualizar`, d);
       } else {
-        await api.post(`/Cliente/Crear`, {
-          ...data,
-          interesFK: data.interesesId,
-          usuarioId: userid,
-        });
+        await api.post(`/Cliente/Crear`, d);
       }
 
       onUpdate &&
@@ -129,7 +148,19 @@ const EditClientScreen = ({ route, navigation }: any) => {
   };
 
   const onRemove = async () => {
-    console.log('removing', clientId);
+    setShowDeleteDialog(false);
+    setIsDeleting(true);
+
+    try {
+      console.log('removing', clientId);
+      // await api.delete(`/Cliente/Eliminar/${clientId}`);
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error al eliminar:', (error as Error).message);
+      // Aquí podrías mostrar un Alert o Snackbar de error
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const selectImage = async () => {
@@ -302,15 +333,11 @@ const EditClientScreen = ({ route, navigation }: any) => {
                         : new Date()
                     }
                     mode="date"
-                    display="default"
+                    display={Platform.OS === 'android' ? 'default' : 'spinner'}
                     onChange={(event, selectedDate) => {
                       setShowBirthPicker(false);
 
                       if (event.type === 'set' && selectedDate) {
-                        console.log(
-                          'Fecha confirmada:',
-                          selectedDate.toLocaleDateString(),
-                        );
                         onChange(selectedDate);
                       }
                     }}
@@ -354,15 +381,11 @@ const EditClientScreen = ({ route, navigation }: any) => {
                         : new Date()
                     }
                     mode="date"
-                    display="default"
+                    display={Platform.OS === 'android' ? 'default' : 'spinner'}
                     onChange={(event, selectedDate) => {
                       setShowAffiliationPicker(false);
 
                       if (event.type === 'set' && selectedDate) {
-                        console.log(
-                          'Fecha confirmada:',
-                          selectedDate.toLocaleDateString(),
-                        );
                         onChange(selectedDate);
                       }
                     }}
@@ -478,8 +501,10 @@ const EditClientScreen = ({ route, navigation }: any) => {
           {isEdit && (
             <Button
               mode="contained"
-              onPress={() => onRemove()}
+              onPress={() => setShowDeleteDialog(true)}
               style={styles.removeBtn}
+              loading={isDeleting}
+              disabled={isDeleting}
             >
               {'ELIMINAR'}
             </Button>
@@ -494,6 +519,34 @@ const EditClientScreen = ({ route, navigation }: any) => {
           </Button>
         </View>
       </ScrollView>
+
+      <Portal>
+        <Dialog
+          visible={showDeleteDialog}
+          onDismiss={() => setShowDeleteDialog(false)}
+        >
+          <Dialog.Icon icon="alert-circle" color="red" />
+          <Dialog.Title style={{ textAlign: 'center' }}>
+            ¿Eliminar cliente?
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyLarge">
+              Esta acción no se puede deshacer. Se borrarán todos los datos
+              asociados a este cliente.
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setShowDeleteDialog(false)}>Cancelar</Button>
+            <Button
+              onPress={onRemove}
+              textColor="red"
+              labelStyle={{ fontWeight: 'bold' }}
+            >
+              Sí, eliminar
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 };
@@ -539,9 +592,6 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   scroll: { padding: 20 },
   input: { marginBottom: 15 },
-  inputContainer: {
-    marginBottom: 15,
-  },
   pickerContainer: {
     marginTop: 15,
     marginBottom: 5,
@@ -614,8 +664,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20,
   },
-  radioRow: { flexDirection: 'row', marginBottom: 15 },
-  radioItem: { flexDirection: 'row', alignItems: 'center', marginRight: 20 },
   submitBtn: { paddingVertical: 8, borderRadius: 5 },
   removeBtn: { backgroundColor: 'red', paddingVertical: 8, borderRadius: 5 },
 });
