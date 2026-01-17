@@ -8,6 +8,9 @@ const passwordValidation = z
   .regex(/[A-Z]/, 'Debe contener al menos una mayúscula')
   .regex(/[0-9]/, 'Debe contener al menos un número');
 
+const base64Regex =
+  /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+
 export const loginSchema = z.object({
   username: z.string().min(1, 'El nombre de usuario es obligatorio'),
   password: passwordValidation,
@@ -31,6 +34,21 @@ export const clientSchema = z.object({
   direccion: z.string(),
   resenaPersonal: z.string(),
   interesesId: z.string(),
+  imagen: z
+    .string()
+    .nullable()
+    .refine(
+      val => {
+        if (!val) return true;
+
+        const base64Data = val.includes(',') ? val.split(',')[1] : val;
+
+        return base64Regex.test(base64Data);
+      },
+      {
+        message: 'La imagen no tiene un formato Base64 válido',
+      },
+    ),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;

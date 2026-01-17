@@ -8,8 +8,9 @@ import {
   ActivityIndicator,
   HelperText,
   Icon,
+  Avatar,
 } from 'react-native-paper';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
@@ -19,6 +20,7 @@ import { ClientFormData, clientSchema } from '../utils/validationSchemas';
 import { Picker } from '@react-native-picker/picker';
 import { InterestItem } from '../store/slices/interSlice';
 import dayjs from 'dayjs';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const EditClientScreen = ({ route, navigation }: any) => {
   const { clientId, onUpdate } = route.params;
@@ -32,6 +34,7 @@ const EditClientScreen = ({ route, navigation }: any) => {
 
   const {
     control,
+    setValue,
     handleSubmit,
     reset,
     formState: { errors },
@@ -49,8 +52,16 @@ const EditClientScreen = ({ route, navigation }: any) => {
       direccion: '',
       resenaPersonal: '',
       interesesId: '',
+      imagen: '',
     },
   });
+
+  const currentImage = useWatch({
+    control,
+    name: 'imagen',
+  });
+
+  console.log(currentImage);
 
   const loadClientData = useCallback(async () => {
     try {
@@ -92,7 +103,7 @@ const EditClientScreen = ({ route, navigation }: any) => {
           resennaPersonal: data.resenaPersonal,
           interesFK: data.interesesId,
           usuarioId: userid,
-          imagen: '',
+          imagen: currentImage,
         };
         console.log(d);
         await api.post(`/Cliente/Actualizar`, d);
@@ -121,6 +132,33 @@ const EditClientScreen = ({ route, navigation }: any) => {
     console.log('removing', clientId);
   };
 
+  const selectImage = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      includeBase64: true,
+      quality: 0.5,
+      selectionLimit: 1,
+    });
+
+    if (result.errorCode === 'permission') {
+      console.warn('Permiso denegado');
+      return;
+    }
+
+    if (result.didCancel) return;
+
+    if (result.assets && result.assets.length > 0) {
+      const asset = result.assets[0];
+
+      const mimeType = asset.type;
+      const base64Data = asset.base64;
+
+      const fullBase64String = `data:${mimeType};base64,${base64Data}`;
+
+      setValue('imagen', fullBase64String);
+    }
+  };
+
   if (loading) return <ActivityIndicator style={styles.ActivityIndicator} />;
 
   return (
@@ -133,6 +171,34 @@ const EditClientScreen = ({ route, navigation }: any) => {
       </Appbar.Header>
 
       <ScrollView contentContainerStyle={styles.scroll}>
+        <View style={styles.avatarSection}>
+          <TouchableOpacity onPress={selectImage} activeOpacity={0.8}>
+            {currentImage ? (
+              <Avatar.Image size={120} source={{ uri: currentImage }} />
+            ) : (
+              <Avatar.Icon
+                size={120}
+                icon="camera-plus"
+                style={styles.avatarIcon}
+              />
+            )}
+
+            <View style={styles.editBadge}>
+              <Avatar.Icon
+                size={30}
+                icon="pencil"
+                color="white"
+                style={styles.badgeIcon}
+              />
+            </View>
+
+            <Text style={styles.photoLabel}>Toca para cambiar foto</Text>
+            {errors.imagen && (
+              <HelperText type="error">{errors.imagen.message}</HelperText>
+            )}
+          </TouchableOpacity>
+        </View>
+
         <Controller
           control={control}
           name="identificacion"
@@ -434,6 +500,32 @@ const EditClientScreen = ({ route, navigation }: any) => {
 
 const styles = StyleSheet.create({
   ActivityIndicator: { flex: 1 },
+  avatarSection: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    marginBottom: 30,
+  },
+  avatarIcon: { backgroundColor: '#ccc' },
+  photoLabel: {
+    marginTop: 8,
+    fontSize: 12,
+    color: '#666',
+    fontStyle: 'italic',
+  },
+  editBadge: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  badgeIcon: {
+    backgroundColor: '#6200ee',
+  },
   inputNombre: { marginBottom: 15, flex: 1 },
   inputApellidos: { marginBottom: 15, flex: 1 },
   inputCelular: { marginTop: 20, marginBottom: 15, flex: 1 },
