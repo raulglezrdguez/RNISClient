@@ -21,7 +21,7 @@ import { InterestItem } from '../store/slices/interSlice';
 import dayjs from 'dayjs';
 
 const EditClientScreen = ({ route, navigation }: any) => {
-  const { clientId } = route.params;
+  const { clientId, onUpdate } = route.params;
   const isEdit = !!clientId;
   const { interests } = useSelector((state: RootState) => state.interests);
   const { userid } = useSelector((state: RootState) => state.auth);
@@ -104,6 +104,13 @@ const EditClientScreen = ({ route, navigation }: any) => {
         });
       }
 
+      onUpdate &&
+        onUpdate({
+          id: clientId,
+          identificacion: data.identificacion,
+          nombre: data.nombre,
+          apellidos: data.apellidos,
+        });
       navigation.goBack();
     } catch (error) {
       console.error((error as Error).message);

@@ -83,11 +83,27 @@ const ClientsScreen = ({ navigation }: any) => {
     loadInitialClients();
   }, [userid]);
 
+  const updateClient = async (data: Client) => {
+    console.log(data);
+    clients.forEach((client, index) => {
+      if (client.id === data.id) {
+        const updatedClients = [...clients];
+        updatedClients[index] = data;
+        setClients(updatedClients);
+      }
+    });
+  };
+
   const renderItem = ({ item }: { item: Client }) => (
     <Surface style={styles.surface} elevation={2}>
       <TouchableOpacity
         style={styles.touchableArea}
-        onPress={() => navigation.navigate('EditClient', { clientId: item.id })}
+        onPress={() =>
+          navigation.navigate('EditClient', {
+            clientId: item.id,
+            onUpdate: updateClient,
+          })
+        }
         activeOpacity={0.7}
       >
         <View style={styles.innerContent}>
