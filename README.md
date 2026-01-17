@@ -1,4 +1,4 @@
-# RNISClient: react native innosoft client
+# RNISClient: react native innovasoft client
 
 Aplicación móvil desarrollada con React Native que ofrece una experiencia de usuario completa con navegación, gestión de estado global, formularios validados y componentes de UI modernos.
 
