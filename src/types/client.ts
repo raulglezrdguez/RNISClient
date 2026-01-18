@@ -3,4 +3,5 @@ export interface Client {
   identificacion: string;
   nombre: string;
   apellidos: string;
+  imagen: string;
 }

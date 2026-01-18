@@ -17,6 +17,7 @@ import {
   Avatar,
   Portal,
   Dialog,
+  Snackbar,
 } from 'react-native-paper';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -42,6 +43,8 @@ const EditClientScreen = ({ route, navigation }: any) => {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [error, setError] = useState<string | null>(null);
 
   const {
     control,
@@ -73,6 +76,8 @@ const EditClientScreen = ({ route, navigation }: any) => {
   });
 
   const loadClientData = useCallback(async () => {
+    setError(null);
+
     try {
       const response = await api.get(`/Cliente/Obtener/${clientId}`);
       const data = response.data;
@@ -81,8 +86,9 @@ const EditClientScreen = ({ route, navigation }: any) => {
         fNacimiento: data.fNacimiento ? new Date(data.fNacimiento) : new Date(),
         fAfiliacion: data.fAfiliacion ? new Date(data.fAfiliacion) : new Date(),
       });
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      setError('Error obteniendo cliente');
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -110,6 +116,8 @@ const EditClientScreen = ({ route, navigation }: any) => {
   }, [isEdit, loadClientData, reset]);
 
   const onSubmit = async (data: ClientFormData) => {
+    setError(null);
+
     try {
       const d = {
         id: clientId,
@@ -140,24 +148,27 @@ const EditClientScreen = ({ route, navigation }: any) => {
           identificacion: data.identificacion,
           nombre: data.nombre,
           apellidos: data.apellidos,
+          imagen: data.imagen,
         });
       navigation.goBack();
-    } catch (error) {
-      console.error((error as Error).message);
+    } catch (err) {
+      setError('Error gestionando cliente');
+      console.error((err as Error).message);
     }
   };
 
   const onRemove = async () => {
     setShowDeleteDialog(false);
     setIsDeleting(true);
+    setError(null);
 
     try {
       console.log('removing', clientId);
       // await api.delete(`/Cliente/Eliminar/${clientId}`);
       navigation.goBack();
-    } catch (error) {
-      console.error('Error al eliminar:', (error as Error).message);
-      // Aquí podrías mostrar un Alert o Snackbar de error
+    } catch (err) {
+      setError('Error al eliminar cliente');
+      console.error('Error al eliminar:', (err as Error).message);
     } finally {
       setIsDeleting(false);
     }
@@ -519,6 +530,10 @@ const EditClientScreen = ({ route, navigation }: any) => {
           </Button>
         </View>
       </ScrollView>
+
+      <Snackbar visible={!!error} onDismiss={() => setError(null)}>
+        {error}
+      </Snackbar>
 
       <Portal>
         <Dialog

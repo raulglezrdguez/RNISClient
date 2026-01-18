@@ -14,6 +14,8 @@ import {
   Icon,
   TextInput,
   Button,
+  Avatar,
+  Snackbar,
 } from 'react-native-paper';
 import api from '../api/api';
 import { Client } from '../types/client';
@@ -32,6 +34,7 @@ const ClientsScreen = ({ navigation }: any) => {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<SearchTypes>('');
+  const [error, setError] = useState<string | null>(null);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -42,6 +45,7 @@ const ClientsScreen = ({ navigation }: any) => {
     async (type: SearchTypes) => {
       setLoading(true);
       setSearchType(type);
+      setError(null);
 
       try {
         const payload = {
@@ -52,8 +56,9 @@ const ClientsScreen = ({ navigation }: any) => {
 
         const response = await api.post('/Cliente/Listado', payload);
         setClients(response.data);
-      } catch (error) {
-        console.error('Error en la búsqueda:', error);
+      } catch (err) {
+        setError('Error cargando listado de clientes');
+        console.error('Error en la búsqueda:', err);
       } finally {
         setLoading(false);
         setRefreshing(false);
@@ -65,6 +70,8 @@ const ClientsScreen = ({ navigation }: any) => {
   useEffect(() => {
     const loadInitialClients = async () => {
       setLoading(true);
+      setError(null);
+
       try {
         const payload = {
           identificacion: '',
@@ -73,8 +80,9 @@ const ClientsScreen = ({ navigation }: any) => {
         };
         const response = await api.post('/Cliente/Listado', payload);
         setClients(response.data);
-      } catch (error) {
-        console.error('Error en la carga inicial:', error);
+      } catch (err) {
+        setError('Error cargando listado inicial');
+        console.error('Error en la carga inicial:', err);
       } finally {
         setLoading(false);
       }
@@ -107,7 +115,11 @@ const ClientsScreen = ({ navigation }: any) => {
       >
         <View style={styles.innerContent}>
           <View style={styles.iconContainer}>
-            <Icon size={42} source="account-circle" color="black" />
+            {item.imagen && item.imagen.length > 0 ? (
+              <Avatar.Image size={42} source={{ uri: item.imagen }} />
+            ) : (
+              <Icon size={42} source="account-circle" color="black" />
+            )}
           </View>
           <View style={styles.innerData}>
             <Text variant="titleLarge" style={styles.clientNameText}>
@@ -200,6 +212,10 @@ const ClientsScreen = ({ navigation }: any) => {
           }
         />
       )}
+
+      <Snackbar visible={!!error} onDismiss={() => setError(null)}>
+        {error}
+      </Snackbar>
     </View>
   );
 };
