@@ -36,7 +36,9 @@ const RegisterScreen = ({ navigation }: any) => {
     <ScrollView
       contentContainerStyle={[
         styles.container,
-        { paddingTop: insets.top + 40 },
+        {
+          paddingTop: insets.top + 40,
+        },
       ]}
     >
       <View style={styles.logoContainer}>
@@ -142,7 +144,11 @@ const RegisterScreen = ({ navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
-  container: { padding: 25, backgroundColor: '#fff' },
+  container: {
+    padding: 25,
+    backgroundColor: '#fff',
+    flex: 1,
+  },
   logoContainer: { alignItems: 'center', marginBottom: 20 },
   labelRegistro: {
     textAlign: 'center',
@@ -158,10 +164,9 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   buttonContainer: {
-    flex: 1,
     flexDirection: 'row',
     alignContent: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     alignItems: 'center',
     marginTop: 24,
   },
