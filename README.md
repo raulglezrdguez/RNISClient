@@ -121,3 +121,21 @@ Este proyecto está licenciado bajo la [Licencia MIT](https://opensource.org/lic
 Email: raulglezrdguez69@gmail.com
 
 Desarrollado con ❤️ usando tecnologias modernas de React Native CLI
+
+## Capturas de pantalla
+
+### Login
+
+![Login de la aplicación](./screenshots/login.png)
+
+### Home
+
+![Vista principal de la aplicación](./screenshots/list.png)
+
+### Lista de clientes
+
+![Listado de clientes](./screenshots/newclient.png)
+
+### Editar cliente
+
+![Editando cliente](./screenshots/editclient.png)
