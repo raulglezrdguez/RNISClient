@@ -139,6 +139,8 @@ const EditClientScreen = ({ route, navigation }: any) => {
         imagen: currentImage,
       };
 
+      console.log(d);
+
       if (isEdit) {
         await api.post(`/Cliente/Actualizar`, d);
       } else {

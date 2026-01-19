@@ -26,14 +26,14 @@ export const clientSchema = z.object({
   nombre: z.string().min(1, 'Requerido'),
   apellidos: z.string().min(1, 'Requerido'),
   identificacion: z.string().min(1, 'Requerido'),
-  sexo: z.string(),
-  fNacimiento: z.date(),
-  fAfiliacion: z.date(),
-  telefonoCelular: z.string(),
-  otroTelefono: z.string(),
-  direccion: z.string(),
-  resenaPersonal: z.string(),
-  interesesId: z.string(),
+  sexo: z.string().min(1, 'Seleccione el sexo'),
+  fNacimiento: z.date({ error: 'Fecha de nacimieto requerida' }),
+  fAfiliacion: z.date({ error: 'Fecha de afiliación requerida' }),
+  telefonoCelular: z.string().trim().min(1, 'Teléfono celular requerido'),
+  otroTelefono: z.string().trim().min(1, 'Otro teléfono requerido'),
+  direccion: z.string().trim().min(1, 'Dirección requerida'),
+  resenaPersonal: z.string().trim().min(1, 'Reseña personal requerida'),
+  interesesId: z.string().min(1, 'Seleccione un interés'),
   imagen: z
     .string()
     .nullable()
