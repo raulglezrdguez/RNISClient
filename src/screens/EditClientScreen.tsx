@@ -54,9 +54,10 @@ const EditClientScreen = ({ route, navigation }: any) => {
     setValue,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
+    mode: 'onChange',
     defaultValues: {
       sexo: 'M',
       fNacimiento: dayjs().subtract(20, 'year').toDate(),
@@ -536,16 +537,20 @@ const EditClientScreen = ({ route, navigation }: any) => {
                   onPress={() => setShowDeleteDialog(true)}
                   style={styles.removeBtn}
                   loading={isDeleting}
-                  disabled={isDeleting}
+                  disabled={isSubmitting}
                 >
-                  {'ELIMINAR'}
+                  ELIMINAR
                 </Button>
               )}
 
               <Button
                 mode="contained"
                 onPress={handleSubmit(onSubmit)}
-                style={styles.submitBtn}
+                style={[
+                  styles.submitBtn,
+                  !isValid && { backgroundColor: '#ccc' },
+                ]}
+                disabled={!isValid}
               >
                 {isEdit ? 'GUARDAR' : 'CREAR'}
               </Button>
@@ -709,8 +714,10 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     marginBottom: 15,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginTop: 20,
+    alignItems: 'center',
+    gap: 15,
   },
   submitBtn: { paddingVertical: 8, borderRadius: 5 },
   removeBtn: { backgroundColor: 'red', paddingVertical: 8, borderRadius: 5 },
