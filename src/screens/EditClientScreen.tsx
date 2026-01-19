@@ -5,6 +5,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Platform,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import {
   TextInput,
@@ -212,324 +215,342 @@ const EditClientScreen = ({ route, navigation }: any) => {
         />
       </Appbar.Header>
 
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={styles.avatarSection}>
-          <TouchableOpacity onPress={selectImage} activeOpacity={0.8}>
-            {currentImage ? (
-              <Avatar.Image size={120} source={{ uri: currentImage }} />
-            ) : (
-              <Avatar.Icon
-                size={120}
-                icon="camera-plus"
-                style={styles.avatarIcon}
-              />
-            )}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView contentContainerStyle={styles.scroll}>
+            <View style={styles.avatarSection}>
+              <TouchableOpacity onPress={selectImage} activeOpacity={0.8}>
+                {currentImage ? (
+                  <Avatar.Image size={120} source={{ uri: currentImage }} />
+                ) : (
+                  <Avatar.Icon
+                    size={120}
+                    icon="camera-plus"
+                    style={styles.avatarIcon}
+                  />
+                )}
 
-            <View style={styles.editBadge}>
-              <Avatar.Icon
-                size={30}
-                icon="pencil"
-                color="white"
-                style={styles.badgeIcon}
+                <View style={styles.editBadge}>
+                  <Avatar.Icon
+                    size={30}
+                    icon="pencil"
+                    color="white"
+                    style={styles.badgeIcon}
+                  />
+                </View>
+
+                <Text style={styles.photoLabel}>Toca para cambiar foto</Text>
+                {errors.imagen && (
+                  <HelperText type="error">{errors.imagen.message}</HelperText>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <Controller
+              control={control}
+              name="identificacion"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  label="Identificación *"
+                  mode="outlined"
+                  value={value}
+                  onChangeText={onChange}
+                  error={!!errors.identificacion}
+                  style={styles.input}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="nombre"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  label="Nombre *"
+                  mode="outlined"
+                  value={value}
+                  onChangeText={onChange}
+                  style={styles.inputNombre}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="apellidos"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  label="Apellidos *"
+                  mode="outlined"
+                  value={value}
+                  onChangeText={onChange}
+                  style={styles.inputApellidos}
+                />
+              )}
+            />
+
+            <View style={styles.pickerContainer}>
+              <View style={styles.labelBackground}>
+                <Text style={styles.customLabel}>Género *</Text>
+              </View>
+
+              <View style={styles.outlinedBorder}>
+                <Controller
+                  control={control}
+                  name="sexo"
+                  render={({ field: { onChange, value } }) => (
+                    <Picker
+                      selectedValue={value}
+                      onValueChange={itemValue => onChange(itemValue)}
+                      mode="dropdown"
+                      style={styles.pickerNative}
+                    >
+                      <Picker.Item
+                        label="Seleccione..."
+                        value=""
+                        color="#999"
+                      />
+                      <Picker.Item label="Masculino" value="M" />
+                      <Picker.Item label="Femenino" value="F" />
+                    </Picker>
+                  )}
+                />
+              </View>
+              {errors.sexo && (
+                <HelperText type="error">{errors.sexo.message}</HelperText>
+              )}
+            </View>
+
+            <View style={styles.pickerContainer}>
+              <View style={styles.labelBackground}>
+                <Text style={styles.customLabel}>Fecha Nacimiento *</Text>
+              </View>
+
+              <Controller
+                control={control}
+                name="fNacimiento"
+                render={({ field: { onChange, value } }) => (
+                  <>
+                    <TouchableOpacity
+                      style={styles.outlinedBorder}
+                      onPress={() => setShowBirthPicker(true)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={styles.dateContent}>
+                        <Text style={styles.dateText}>
+                          {value
+                            ? value.toLocaleDateString()
+                            : 'Seleccione una fecha'}
+                        </Text>
+                        <Icon source="calendar" size={24} color="#49454F" />
+                      </View>
+                    </TouchableOpacity>
+
+                    {showBirthPicker && (
+                      <DateTimePicker
+                        value={
+                          value instanceof Date && !isNaN(value.getTime())
+                            ? value
+                            : new Date()
+                        }
+                        mode="date"
+                        display={
+                          Platform.OS === 'android' ? 'default' : 'spinner'
+                        }
+                        onChange={(event, selectedDate) => {
+                          setShowBirthPicker(false);
+
+                          if (event.type === 'set' && selectedDate) {
+                            onChange(selectedDate);
+                          }
+                        }}
+                      />
+                    )}
+                  </>
+                )}
               />
             </View>
 
-            <Text style={styles.photoLabel}>Toca para cambiar foto</Text>
-            {errors.imagen && (
-              <HelperText type="error">{errors.imagen.message}</HelperText>
-            )}
-          </TouchableOpacity>
-        </View>
+            <View style={styles.pickerContainer}>
+              <View style={styles.labelBackground}>
+                <Text style={styles.customLabel}>Fecha de Afiliación *</Text>
+              </View>
 
-        <Controller
-          control={control}
-          name="identificacion"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              label="Identificación *"
-              mode="outlined"
-              value={value}
-              onChangeText={onChange}
-              error={!!errors.identificacion}
-              style={styles.input}
-            />
-          )}
-        />
+              <Controller
+                control={control}
+                name="fAfiliacion"
+                render={({ field: { onChange, value } }) => (
+                  <>
+                    <TouchableOpacity
+                      style={styles.outlinedBorder}
+                      onPress={() => setShowAffiliationPicker(true)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={styles.dateContent}>
+                        <Text style={styles.dateText}>
+                          {value
+                            ? value.toLocaleDateString()
+                            : 'Seleccione una fecha'}
+                        </Text>
+                        <Icon source="calendar" size={24} color="#49454F" />
+                      </View>
+                    </TouchableOpacity>
 
-        <Controller
-          control={control}
-          name="nombre"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              label="Nombre *"
-              mode="outlined"
-              value={value}
-              onChangeText={onChange}
-              style={styles.inputNombre}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="apellidos"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              label="Apellidos *"
-              mode="outlined"
-              value={value}
-              onChangeText={onChange}
-              style={styles.inputApellidos}
-            />
-          )}
-        />
+                    {showAffiliationPicker && (
+                      <DateTimePicker
+                        value={
+                          value instanceof Date && !isNaN(value.getTime())
+                            ? value
+                            : new Date()
+                        }
+                        mode="date"
+                        display={
+                          Platform.OS === 'android' ? 'default' : 'spinner'
+                        }
+                        onChange={(event, selectedDate) => {
+                          setShowAffiliationPicker(false);
 
-        <View style={styles.pickerContainer}>
-          <View style={styles.labelBackground}>
-            <Text style={styles.customLabel}>Género *</Text>
-          </View>
+                          if (event.type === 'set' && selectedDate) {
+                            onChange(selectedDate);
+                          }
+                        }}
+                      />
+                    )}
+                  </>
+                )}
+              />
+            </View>
 
-          <View style={styles.outlinedBorder}>
             <Controller
               control={control}
-              name="sexo"
+              name="telefonoCelular"
               render={({ field: { onChange, value } }) => (
-                <Picker
-                  selectedValue={value}
-                  onValueChange={itemValue => onChange(itemValue)}
-                  mode="dropdown"
-                  style={styles.pickerNative}
-                >
-                  <Picker.Item label="Seleccione..." value="" color="#999" />
-                  <Picker.Item label="Masculino" value="M" />
-                  <Picker.Item label="Femenino" value="F" />
-                </Picker>
+                <TextInput
+                  label="Celular *"
+                  mode="outlined"
+                  value={value}
+                  onChangeText={onChange}
+                  style={styles.inputCelular}
+                />
               )}
             />
-          </View>
-          {errors.sexo && (
-            <HelperText type="error">{errors.sexo.message}</HelperText>
-          )}
-        </View>
 
-        <View style={styles.pickerContainer}>
-          <View style={styles.labelBackground}>
-            <Text style={styles.customLabel}>Fecha Nacimiento *</Text>
-          </View>
-
-          <Controller
-            control={control}
-            name="fNacimiento"
-            render={({ field: { onChange, value } }) => (
-              <>
-                <TouchableOpacity
-                  style={styles.outlinedBorder}
-                  onPress={() => setShowBirthPicker(true)}
-                  activeOpacity={0.7}
-                >
-                  <View style={styles.dateContent}>
-                    <Text style={styles.dateText}>
-                      {value
-                        ? value.toLocaleDateString()
-                        : 'Seleccione una fecha'}
-                    </Text>
-                    <Icon source="calendar" size={24} color="#49454F" />
-                  </View>
-                </TouchableOpacity>
-
-                {showBirthPicker && (
-                  <DateTimePicker
-                    value={
-                      value instanceof Date && !isNaN(value.getTime())
-                        ? value
-                        : new Date()
-                    }
-                    mode="date"
-                    display={Platform.OS === 'android' ? 'default' : 'spinner'}
-                    onChange={(event, selectedDate) => {
-                      setShowBirthPicker(false);
-
-                      if (event.type === 'set' && selectedDate) {
-                        onChange(selectedDate);
-                      }
-                    }}
-                  />
-                )}
-              </>
-            )}
-          />
-        </View>
-
-        <View style={styles.pickerContainer}>
-          <View style={styles.labelBackground}>
-            <Text style={styles.customLabel}>Fecha de Afiliación *</Text>
-          </View>
-
-          <Controller
-            control={control}
-            name="fAfiliacion"
-            render={({ field: { onChange, value } }) => (
-              <>
-                <TouchableOpacity
-                  style={styles.outlinedBorder}
-                  onPress={() => setShowAffiliationPicker(true)}
-                  activeOpacity={0.7}
-                >
-                  <View style={styles.dateContent}>
-                    <Text style={styles.dateText}>
-                      {value
-                        ? value.toLocaleDateString()
-                        : 'Seleccione una fecha'}
-                    </Text>
-                    <Icon source="calendar" size={24} color="#49454F" />
-                  </View>
-                </TouchableOpacity>
-
-                {showAffiliationPicker && (
-                  <DateTimePicker
-                    value={
-                      value instanceof Date && !isNaN(value.getTime())
-                        ? value
-                        : new Date()
-                    }
-                    mode="date"
-                    display={Platform.OS === 'android' ? 'default' : 'spinner'}
-                    onChange={(event, selectedDate) => {
-                      setShowAffiliationPicker(false);
-
-                      if (event.type === 'set' && selectedDate) {
-                        onChange(selectedDate);
-                      }
-                    }}
-                  />
-                )}
-              </>
-            )}
-          />
-        </View>
-
-        <Controller
-          control={control}
-          name="telefonoCelular"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              label="Celular *"
-              mode="outlined"
-              value={value}
-              onChangeText={onChange}
-              style={styles.inputCelular}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="otroTelefono"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              label="Teléfono *"
-              mode="outlined"
-              value={value}
-              onChangeText={onChange}
-              style={styles.inputApellidos}
-            />
-          )}
-        />
-
-        <View style={styles.pickerContainer}>
-          <View style={styles.labelBackground}>
-            <Text style={styles.customLabel}>Interés *</Text>
-          </View>
-
-          <View style={styles.outlinedBorder}>
             <Controller
               control={control}
-              name="interesesId"
+              name="otroTelefono"
               render={({ field: { onChange, value } }) => (
-                <Picker
-                  selectedValue={value}
-                  onValueChange={itemValue => onChange(itemValue)}
-                  mode="dropdown"
-                  style={styles.pickerNative}
-                >
-                  <Picker.Item
-                    label="Seleccione un interés..."
-                    value=""
-                    color="#999"
-                  />
-                  {interests.map((interes: InterestItem) => (
-                    <Picker.Item
-                      key={interes.id}
-                      label={interes.descripcion}
-                      value={interes.id}
-                    />
-                  ))}
-                </Picker>
+                <TextInput
+                  label="Teléfono *"
+                  mode="outlined"
+                  value={value}
+                  onChangeText={onChange}
+                  style={styles.inputApellidos}
+                />
               )}
             />
-          </View>
-          {errors.interesesId && (
-            <HelperText type="error">{errors.interesesId.message}</HelperText>
-          )}
-        </View>
 
-        <Controller
-          control={control}
-          name="direccion"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              label="Direccion *"
-              mode="outlined"
-              value={value}
-              onChangeText={onChange}
-              style={styles.inputDireccion}
-              multiline={true}
-              numberOfLines={6}
-              textAlignVertical="top"
-              scrollEnabled={true}
+            <View style={styles.pickerContainer}>
+              <View style={styles.labelBackground}>
+                <Text style={styles.customLabel}>Interés *</Text>
+              </View>
+
+              <View style={styles.outlinedBorder}>
+                <Controller
+                  control={control}
+                  name="interesesId"
+                  render={({ field: { onChange, value } }) => (
+                    <Picker
+                      selectedValue={value}
+                      onValueChange={itemValue => onChange(itemValue)}
+                      mode="dropdown"
+                      style={styles.pickerNative}
+                    >
+                      <Picker.Item
+                        label="Seleccione un interés..."
+                        value=""
+                        color="#999"
+                      />
+                      {interests.map((interes: InterestItem) => (
+                        <Picker.Item
+                          key={interes.id}
+                          label={interes.descripcion}
+                          value={interes.id}
+                        />
+                      ))}
+                    </Picker>
+                  )}
+                />
+              </View>
+              {errors.interesesId && (
+                <HelperText type="error">
+                  {errors.interesesId.message}
+                </HelperText>
+              )}
+            </View>
+
+            <Controller
+              control={control}
+              name="direccion"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  label="Direccion *"
+                  mode="outlined"
+                  value={value}
+                  onChangeText={onChange}
+                  style={styles.inputDireccion}
+                  multiline={true}
+                  numberOfLines={6}
+                  textAlignVertical="top"
+                  scrollEnabled={true}
+                />
+              )}
             />
-          )}
-        />
 
-        <Controller
-          control={control}
-          name="resenaPersonal"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              label="Reseña *"
-              mode="outlined"
-              value={value}
-              onChangeText={onChange}
-              style={styles.inputDireccion}
-              multiline={true}
-              numberOfLines={6}
-              textAlignVertical="top"
-              scrollEnabled={true}
+            <Controller
+              control={control}
+              name="resenaPersonal"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  label="Reseña *"
+                  mode="outlined"
+                  value={value}
+                  onChangeText={onChange}
+                  style={styles.inputDireccion}
+                  multiline={true}
+                  numberOfLines={6}
+                  textAlignVertical="top"
+                  scrollEnabled={true}
+                />
+              )}
             />
-          )}
-        />
 
-        <View style={styles.row}>
-          {isEdit && (
-            <Button
-              mode="contained"
-              onPress={() => setShowDeleteDialog(true)}
-              style={styles.removeBtn}
-              loading={isDeleting}
-              disabled={isDeleting}
-            >
-              {'ELIMINAR'}
-            </Button>
-          )}
+            <View style={styles.row}>
+              {isEdit && (
+                <Button
+                  mode="contained"
+                  onPress={() => setShowDeleteDialog(true)}
+                  style={styles.removeBtn}
+                  loading={isDeleting}
+                  disabled={isDeleting}
+                >
+                  {'ELIMINAR'}
+                </Button>
+              )}
 
-          <Button
-            mode="contained"
-            onPress={handleSubmit(onSubmit)}
-            style={styles.submitBtn}
-          >
-            {isEdit ? 'GUARDAR' : 'CREAR'}
-          </Button>
-        </View>
-      </ScrollView>
+              <Button
+                mode="contained"
+                onPress={handleSubmit(onSubmit)}
+                style={styles.submitBtn}
+              >
+                {isEdit ? 'GUARDAR' : 'CREAR'}
+              </Button>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
 
       <Snackbar visible={!!error} onDismiss={() => setError(null)}>
         {error}
@@ -619,6 +640,7 @@ const styles = StyleSheet.create({
     height: 56,
     justifyContent: 'center',
     backgroundColor: 'transparent',
+    overflow: 'hidden',
   },
   labelBackground: {
     position: 'absolute',
@@ -644,6 +666,15 @@ const styles = StyleSheet.create({
     color: '#1C1B1F',
   },
   pickerNative: {
+    ...Platform.select({
+      ios: {
+        height: 200,
+        marginTop: -10,
+      },
+      android: {
+        height: 50,
+      },
+    }),
     marginLeft: 4,
     color: '#1C1B1F',
   },
