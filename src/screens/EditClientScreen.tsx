@@ -48,6 +48,8 @@ const EditClientScreen = ({ route, navigation }: any) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState('');
 
   const {
     control,
@@ -144,9 +146,13 @@ const EditClientScreen = ({ route, navigation }: any) => {
 
       if (isEdit) {
         await api.post(`/Cliente/Actualizar`, d);
+        setSnackbarMsg('¡Cliente actualizado con éxito!');
       } else {
         await api.post(`/Cliente/Crear`, d);
+        setSnackbarMsg('¡Cliente creado con éxito!');
       }
+
+      setSnackbarVisible(true);
 
       onUpdate &&
         onUpdate({
@@ -156,7 +162,10 @@ const EditClientScreen = ({ route, navigation }: any) => {
           apellidos: data.apellidos,
           imagen: data.imagen,
         });
-      navigation.goBack();
+
+      setTimeout(() => {
+        navigation.goBack();
+      }, 1500);
     } catch (err) {
       setError('Error gestionando cliente');
       console.error((err as Error).message);
@@ -589,6 +598,19 @@ const EditClientScreen = ({ route, navigation }: any) => {
             </Button>
           </Dialog.Actions>
         </Dialog>
+
+        <Snackbar
+          visible={snackbarVisible}
+          onDismiss={() => setSnackbarVisible(false)}
+          duration={2000}
+          style={styles.successSnackbar}
+          action={{
+            label: 'OK',
+            onPress: () => navigation.goBack(),
+          }}
+        >
+          {snackbarMsg}
+        </Snackbar>
       </Portal>
     </View>
   );
@@ -721,6 +743,10 @@ const styles = StyleSheet.create({
   },
   submitBtn: { paddingVertical: 8, borderRadius: 5 },
   removeBtn: { backgroundColor: 'red', paddingVertical: 8, borderRadius: 5 },
+  successSnackbar: {
+    backgroundColor: '#29602b',
+    marginBottom: 20,
+  },
 });
 
 export default EditClientScreen;
